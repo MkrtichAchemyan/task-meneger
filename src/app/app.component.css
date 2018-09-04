@@ -40,3 +40,55 @@
 .dropdown_content_text{
   font-size: 10px;
 }
+.nav2 a {
+  color: #FFFFFF;
+  font-size: 15px;
+  margin-top: 2px;
+  background-color: transparent;
+  padding: 7px 10px;
+}
+
+.nav2 a:hover{
+  background-color: #026aa7;
+  border-radius: 4px;
+}
+.vr{
+  float: left;
+  border-left: 1px solid hsla(0,0%,100%,.2);
+  height: 22px;
+  margin: 10px 7px 0 20px;
+}
+.badge{
+  background-color: hsla(0,0%,100%,.3);
+  padding: 4px 7px;
+  border-radius: 50px;
+}
+.circle{
+  color: #FFFFFF;
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  background-color: hsla(0,0%,100%,.3);
+  padding: 4px;
+  text-align: center;
+  margin-top: 2px;
+}
+.circle_admin{
+  color: #000000;
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  background-color: gainsboro;
+  margin:2px 0 0 20px;
+  padding: 4px;
+  text-align: center;
+}
+.circle:hover{
+  background-color: #026aa7;
+  cursor: pointer;
+}
+.circle_admin:hover{
+  background-color: darkgray;
+  cursor: pointer;
+}
+
