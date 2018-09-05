@@ -93,14 +93,25 @@
 <div class="container-fluid">
   <div class="row">
     <ul class="d-flex flex-row">
-      <ul *ngFor="let item of list">
-        <li>
-          <div class="container-fluid card">
-            <h6 class="font-weight-bold">{{item}}</h6>
-            <button class = "btn btn_card" (click)="addCard()"> <i class="fas fa-plus" style="float: left; margin-top: 3px;"></i> Add Card</button>
-          </div>
-        </li>
-      </ul>
+      <li *ngFor="let list of arr; let i = index" class="mr-1">
+            <div class="container-fluid card">
+              <h6 class="font-weight-bold">{{list.listName}}</h6>
+              <ul>
+                <li *ngFor="let card of list.card">
+                  <div class="container-fluid cardColum">{{card}}
+                    <button class="btn btn-xs float-right p-0" style="background-color: transparent">
+                      <i class="fas fa-pencil-alt"></i>
+                    </button>
+                  </div>
+                </li>
+              </ul>
+              <button class = "btn btn_card" (click)="addCardColum(AddCardColum,AddCard)" #AddCardColum> <i class="fas fa-plus" style="float: left; margin-top: 3px;"></i> Add Card</button>
+              <div class="container-fluid add_card" #AddCard>
+                <input class="form-control border-right-0 rounded-0" type="text" placeholder="Enter Card Name" style="border-radius: 4px" #CardName>
+                <button class = "btn btn-success" (click)="addCard(AddCard,AddCardColum,CardName,i)">Add Card</button>
+              </div>
+            </div>
+      </li>
       <li>
         <div class="container-fluid add_list" #AddList>
           <input class="form-control border-right-0 rounded-0" type="text" placeholder="Enter List Name" style="border-radius: 4px" #ListName>
@@ -108,7 +119,7 @@
         </div>
         <div class="container-fluid add_collum" (click)="addColum(AddColum,AddList)" #AddColum>
           <i class="fas fa-plus" style="float: left; margin-top: 3px;"></i>
-          Add Colum
+          Add New List
         </div>
       </li>
     </ul>

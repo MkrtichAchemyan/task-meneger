@@ -124,7 +124,6 @@ ul{
 }
 .card{
   width: 250px;
-  height: 88px;
   background-color:gainsboro;
   border-radius: 4px;
   padding: 8px;
@@ -137,5 +136,17 @@ ul{
 }
 .btn_card:hover{
   background-color: darkgray;
+}
+.add_card{
+  border-radius: 4px;
+  padding: 8px;
+  margin-top: 2px;
+  display: none;
+}
+.cardColum{
+  border-radius: 4px;
+  background-color: white;
+  padding: 4px !important;
+  margin-top: 2px;
 }
 

@@ -4,6 +4,8 @@ import { AppComponent } from './app.component';
 import {FormsModule} from '@angular/forms';
 import {HttpClientModule} from '@angular/common/http';
 import { BoardComponent } from './board/board.component';
+import {GetService} from './get.sevice';
+import {SocketService} from './socket.service';
 
 @NgModule({
   declarations: [
@@ -15,7 +17,10 @@ import { BoardComponent } from './board/board.component';
     FormsModule,
     HttpClientModule,
   ],
-  providers: [],
+  providers: [
+    GetService,
+    SocketService
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
