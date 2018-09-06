@@ -36,7 +36,19 @@ app.get("/api/project", (req, res) => {
     .populate({path: "card"})
     .exec((err, lists) => {
       console.log(lists, "------------lists");
-      res.send(lists);
+      let newLists = [];
+      lists.map((eachList)=>{
+        let cardNames = [];
+        eachList.card.map(card=>{
+          cardNames.push(card.cardName)
+        })
+        newLists.push({
+          _id:eachList._id,
+          listName:eachList.listName,
+          card: cardNames
+        });
+      })
+      res.send(newLists);
     });
 });
 

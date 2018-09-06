@@ -10,7 +10,7 @@ var listsSchema = new Schema({
     require: true
   },
   card: [
-    {type: Schema.Types.ObjectId, ref: 'cards'},
+    {type: Schema.Types.ObjectId, ref: 'cards'}
   ],
   // time:{
   //   type: Date,

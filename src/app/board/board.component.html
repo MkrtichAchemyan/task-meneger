@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand-md navbar-dark" style="width: 100%">
+<nav class="navbar navbar-expand-md navbar-dark" #Nav1>
   <a class="navbar-brand abs" href="#">
     <span class="logo">
       <img src="../../assets/images/trello-logo-white.svg" alt="" width="80" height="30">
@@ -92,13 +92,13 @@
 </nav>
 <div class="container-fluid">
   <div class="row">
-    <ul class="d-flex flex-row">
+    <ul class="d-flex flex-row" [dragula]='MANY_ITEMS' [(dragulaModel)]='arr'>
       <li *ngFor="let list of arr; let i = index" class="mr-1">
             <div class="container-fluid card">
               <h6 class="font-weight-bold">{{list.listName}}</h6>
-              <ul>
+              <ul [dragula]='MANY_ITEMS' [(dragulaModel)]='list.card'>
                 <li *ngFor="let card of list.card">
-                  <div class="container-fluid cardColum">{{card}}
+                  <div class="container-fluid cardColum" >{{card}}
                     <button class="btn btn-xs float-right p-0" style="background-color: transparent">
                       <i class="fas fa-pencil-alt"></i>
                     </button>
@@ -125,5 +125,6 @@
     </ul>
   </div>
 </div>
+
 
 
