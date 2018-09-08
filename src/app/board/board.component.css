@@ -121,25 +121,30 @@ li{
   display: none;
 
 }
-.card{
-  min-height: 50px;
-  background-color:gainsboro;
+
+.lists{
+  margin: 0;
   padding: 8px;
-  margin: -8px 2px 0 2px ;
+  background-color:gainsboro;
+  min-height: 10px;
+  border-radius: 4px;
+  min-width: 200px;
 }
 .btn_card{
-  color: dimgrey;
-  background-color:gainsboro;
-  width: 286px;
+  color: gray;
+  background-color:transparent;
+  text-align: center;
+  width: 188px;
+  margin: 5px;
 }
 .btn_card:hover{
   background-color: darkgray;
+  color: white;
 }
 .add_card{
   background-color:gainsboro;
-  width: 286px;
   border-radius: 4px;
-  padding: 8px;
+  padding: 0 8px ;
   display: none;
 }
 .cardColum{
@@ -147,4 +152,5 @@ li{
   background-color: white;
   padding: 4px !important;
   margin-top: 2px;
+  cursor: pointer;
 }

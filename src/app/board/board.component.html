@@ -100,30 +100,43 @@
 </nav>
 <div class="container-fluid">
   <div class="row">
-    <div class="col-md-2" *ngFor="let list of arr" >
-      <h6 class="font-weight-bold" style="background-color: gainsboro; width: 286px; padding: 4px">{{list.listName}}</h6>
-      <ul dragula="dragdrop" class="card" id="{{list._id}}">
-        <li  [hidden]="list.card.length === 0" *ngFor="let card of list.card; let i = index" id="{{card._id}}" value="{{i}}">
-          <div class="container-fluid " >
-            <div class="container cardColum">
-              {{card.cardName}}
-              <button class="btn btn-xs float-right p-0" style="background-color: transparent">
-                <i class="fas fa-pencil-alt"></i>
-              </button>
+    <div *ngFor="let list of arr" style="padding: 4px !important;">
+      <div class="col-12 lists">
+        <div class="col-12 ">
+          <div class="container">
+            <h6 class="font-weight-bold m-0">{{list.listName}}</h6>
+          </div>
+        </div>
+        <div class="col-12 ">
+          <div class="container-fluid">
+            <ul dragula="dragdrop" id="{{list._id}}" style="margin: 0; padding: 0; min-height: 10px">
+              <li  [hidden]="list.card.length === 0" *ngFor="let card of list.card; let i = index" id="{{card._id}}" value="{{i}}" style="margin-top: 2px">
+                <div class="container-fluid " >
+                  <div class="container cardColum">
+                    {{card.cardName}}
+                    <button class="btn btn-xs float-right p-0" style="background-color: transparent">
+                      <i class="fas fa-pencil-alt"></i>
+                    </button>
+                  </div>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="col-12">
+          <div class="container">
+            <button class="btn btn_card" (click)="addCardColum(AddCardColum,AddCard)" #AddCardColum>
+              <i class="fas fa-plus" style="margin-top: 3px; margin-right: 20px"></i>
+              Add Card
+            </button>
+            <div class="container-fluid add_card" #AddCard>
+              <input class="form-control border-right-0 rounded-0" type="text" placeholder="Enter Card Name"
+                     style="border-radius: 4px" #CardName>
+              <button class="btn btn-success" (click)="addCard(AddCard,AddCardColum,CardName, list._id)">Add Card</button>
             </div>
           </div>
-        </li>
-      </ul>
-      <button class="btn btn_card" (click)="addCardColum(AddCardColum,AddCard)" #AddCardColum>
-        <i class="fas fa-plus" style="float: left; margin-top: 3px;"></i>
-        Add Card
-      </button>
-      <div class="container-fluid add_card" #AddCard>
-        <input class="form-control border-right-0 rounded-0" type="text" placeholder="Enter Card Name"
-               style="border-radius: 4px" #CardName>
-        <button class="btn btn-success" (click)="addCard(AddCard,AddCardColum,CardName, list._id)">Add Card</button>
+        </div>
       </div>
-
     </div>
     <div>
       <div class="container-fluid add_list" #AddList>
