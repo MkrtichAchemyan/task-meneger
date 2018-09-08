@@ -14,7 +14,6 @@ import { DragulaModule } from 'ng2-dragula';
   declarations: [
     AppComponent,
     BoardComponent,
-
   ],
   imports: [
     BrowserModule,

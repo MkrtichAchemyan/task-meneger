@@ -35,21 +35,11 @@ app.get("/api/project", (req, res) => {
   Lists.find({})
     .populate({path: "card"})
     .exec((err, lists) => {
-      console.log(lists, "------------lists");
-      let newLists = [];
-      lists.map((eachList)=>{
-        let cardNames = [];
-        eachList.card.map(card=>{
-          cardNames.push(card.cardName)
-        })
-        newLists.push({
-          _id:eachList._id,
-          listName:eachList.listName,
-          card: cardNames
-        });
-      })
-      res.send(newLists);
-    });
+      if (err) {
+        throw err;
+      }
+      res.send(lists);
+    })
 });
 
 io.on('connection', (socket) => {
@@ -61,39 +51,72 @@ io.on('connection', (socket) => {
     list.save()
       .then((list) => {
         Lists.findOne({"_id": list._id})
-          .populate("card")
+        // .populate("card")
           .exec((err, list) => {
             if (err) {
               throw err;
             }
-            console.log(list);
+            console.log(list, "++++++++++++++++++++++++++");
             io.emit("newList", list);
           })
       })
   });
 
   socket.on('sendCard', (data) => {
-    console.log(data, "*************************");
-    const card = new Cards({
-      cardName: data.cardName,
-    });
-    card.save()
-      .then((card) => {
-        Lists.findOne({"_id": data.id})
-          .exec((err, list) => {
-            if (err) {
-              throw err;
-            }
-            console.log(list);
-            list.card.push(card._id);
-            list.save()
-            console.log(list, "--------------------------------");
-            io.emit("newCard", card);
-          })
-      })
+    var promise = new Promise(((resolve, reject) => {
+      const card = new Cards({
+        cardName: data.cardName,
+        listId:data.id
+      });
+      card.save()
+        .then((card1) => {
+          Lists.findOne({"_id":data.id})
+            .populate("card")
+            .exec((err, list)=>{
+               if (err) {
+                 throw err;
+               }
+              list.card.push(card1);
+              list.save()
+                .then((list)=>{
+                  resolve("done");
+                });
+              //console.log(list.card, "--------------+++++++++++-----------------");
+            })
+
+        })
+    }))
+
+    promise.then((val) => {
+      Lists.findOne({"_id": data.id})
+        .populate({path: "card"})
+        .exec((err, list) => {
+         // console.log(list.card, "--------------LIst--card------------------");
+          io.emit("newCard", list.card[list.card.length-1]);
+        })
+    })
   })
 
+  socket.on("dargableData", (data)=>{
+    console.log(data, "dargableData");
+    Lists.findOne({_id:data.dragListId}, (list)=>{
 
+     list.card.splice(data.dragCardIndex,1);
+     list.save();
+      console.log(list, "-----------------------");
+    })
+
+    Lists.findOne({_id:data.dropListId}, (list)=>{
+      list.card.splice(data.dropCardIndex, 0, data.dragCardId);
+      list.save();
+      console.log(list, "+++++++++++++++++++");
+    })
+    Lists.find({})
+      .populate("card")
+      .exec((err, lists)=>{
+        socket.broadcast.emit("newDragableData", lists);
+      })
+  })
 })
 
 

@@ -23,11 +23,26 @@ export class SocketService {
   }
 
   sendCard(data){
+    console.log(data, "socket data")
     return this.socket.emit("sendCard", data)
   }
+
   getCard(){
     let observable = new Observable(observer => {
       this.socket.on('newCard', (data) => {
+        observer.next(data);
+      })
+    });
+    return observable
+  }
+
+  sendDragableData(data){
+    return this.socket.emit("dargableData", data)
+  }
+
+  getDragableData(){
+    let observable = new Observable(observer => {
+      this.socket.on('newDragableData', (data) => {
         observer.next(data);
       })
     });

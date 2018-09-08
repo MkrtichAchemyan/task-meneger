@@ -9,13 +9,12 @@ var cardsSchema = new Schema({
     type: String,
     require: true
   },
-  // listId:{
-  //   type: Schema.Types.ObjectId,
-  //   ref: 'lists',
-  // },
+  listId:{
+    type: Schema.Types.ObjectId,
+    ref: 'lists',
+  },
   // time: {
   //   type: Date,
-
   // }
 });
 

@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand-md navbar-dark" #Nav1>
+<nav class="navbar navbar-expand-md navbar-dark heder" #Nav1>
   <a class="navbar-brand abs" href="#">
     <span class="logo">
       <img src="../../assets/images/trello-logo-white.svg" alt="" width="80" height="30">
@@ -23,7 +23,8 @@
       <li class="nav-item">
         <div class="row no-gutters">
           <div class="col">
-            <input class="form-control border-right-0 rounded-0" type="search" style="background-color: hsla(0,0%,100%,0); border:none; cursor: pointer" >
+            <input class="form-control border-right-0 rounded-0" type="search"
+                   style="background-color: hsla(0,0%,100%,0); border:none; cursor: pointer">
           </div>
           <div class="p-2">
             <i class="fa fa-search"></i>
@@ -32,8 +33,9 @@
       </li>
     </ul>
     <ul class="navbar-nav ml-auto">
-      <li class="nav-item dropdown" style = "cursor:pointer">
-        <a class="nav-link dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      <li class="nav-item dropdown" style="cursor:pointer">
+        <a class="nav-link dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
+           aria-expanded="false">
           <i class="fas fa-plus"></i>
         </a>
         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
@@ -41,16 +43,22 @@
           <hr>
           <div class="dropdown-content doska">
             <h5 class="font-weight-bold">Sozdat Dosku</h5>
-            <p class="dropdown_content_text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ab adipisci aliquid blanditiis cumque deserunt dicta dolor dolore ducimus earum eos maiores, nam nulla ut veniam veritatis. Impedit itaque quas veritatis!</p>
+            <p class="dropdown_content_text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ab adipisci
+              aliquid blanditiis cumque deserunt dicta dolor dolore ducimus earum eos maiores, nam nulla ut veniam
+              veritatis. Impedit itaque quas veritatis!</p>
           </div>
           <div class="dropdown-content komanda">
             <h5 class="font-weight-bold">Sozdat Komandu</h5>
-            <p class="dropdown_content_text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ab adipisci aliquid blanditiis cumque deserunt dicta dolor dolore ducimus earum eos maiores, nam nulla ut veniam veritatis. Impedit itaque quas veritatis!</p>
+            <p class="dropdown_content_text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ab adipisci
+              aliquid blanditiis cumque deserunt dicta dolor dolore ducimus earum eos maiores, nam nulla ut veniam
+              veritatis. Impedit itaque quas veritatis!</p>
 
           </div>
           <div class="dropdown-content bisnes comanda">
             <h5 class="font-weight-bold">Sozdat Biznes Komandu</h5>
-            <p class="dropdown_content_text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ab adipisci aliquid blanditiis cumque deserunt dicta dolor dolore ducimus earum eos maiores, nam nulla ut veniam veritatis. Impedit itaque quas veritatis!</p>
+            <p class="dropdown_content_text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ab adipisci
+              aliquid blanditiis cumque deserunt dicta dolor dolore ducimus earum eos maiores, nam nulla ut veniam
+              veritatis. Impedit itaque quas veritatis!</p>
           </div>
         </div>
       </li>
@@ -92,37 +100,42 @@
 </nav>
 <div class="container-fluid">
   <div class="row">
-    <ul class="d-flex flex-row" [dragula]='MANY_ITEMS' [(dragulaModel)]='arr'>
-      <li *ngFor="let list of arr; let i = index" class="mr-1">
-            <div class="container-fluid card">
-              <h6 class="font-weight-bold">{{list.listName}}</h6>
-              <ul [dragula]='MANY_ITEMS' [(dragulaModel)]='list.card'>
-                <li *ngFor="let card of list.card">
-                  <div class="container-fluid cardColum" >{{card}}
-                    <button class="btn btn-xs float-right p-0" style="background-color: transparent">
-                      <i class="fas fa-pencil-alt"></i>
-                    </button>
-                  </div>
-                </li>
-              </ul>
-              <button class = "btn btn_card" (click)="addCardColum(AddCardColum,AddCard)" #AddCardColum> <i class="fas fa-plus" style="float: left; margin-top: 3px;"></i> Add Card</button>
-              <div class="container-fluid add_card" #AddCard>
-                <input class="form-control border-right-0 rounded-0" type="text" placeholder="Enter Card Name" style="border-radius: 4px" #CardName>
-                <button class = "btn btn-success" (click)="addCard(AddCard,AddCardColum,CardName,i)">Add Card</button>
-              </div>
+    <div class="col-md-2" *ngFor="let list of arr" >
+      <h6 class="font-weight-bold" style="background-color: gainsboro; width: 286px; padding: 4px">{{list.listName}}</h6>
+      <ul dragula="dragdrop" class="card" id="{{list._id}}">
+        <li  [hidden]="list.card.length === 0" *ngFor="let card of list.card; let i = index" id="{{card._id}}" value="{{i}}">
+          <div class="container-fluid " >
+            <div class="container cardColum">
+              {{card.cardName}}
+              <button class="btn btn-xs float-right p-0" style="background-color: transparent">
+                <i class="fas fa-pencil-alt"></i>
+              </button>
             </div>
-      </li>
-      <li>
-        <div class="container-fluid add_list" #AddList>
-          <input class="form-control border-right-0 rounded-0" type="text" placeholder="Enter List Name" style="border-radius: 4px" #ListName>
-          <button class = "btn btn-success" (click)="addList(AddList,AddColum,ListName)">Add List</button>
-        </div>
-        <div class="container-fluid add_collum" (click)="addColum(AddColum,AddList)" #AddColum>
-          <i class="fas fa-plus" style="float: left; margin-top: 3px;"></i>
-          Add New List
-        </div>
-      </li>
-    </ul>
+          </div>
+        </li>
+      </ul>
+      <button class="btn btn_card" (click)="addCardColum(AddCardColum,AddCard)" #AddCardColum>
+        <i class="fas fa-plus" style="float: left; margin-top: 3px;"></i>
+        Add Card
+      </button>
+      <div class="container-fluid add_card" #AddCard>
+        <input class="form-control border-right-0 rounded-0" type="text" placeholder="Enter Card Name"
+               style="border-radius: 4px" #CardName>
+        <button class="btn btn-success" (click)="addCard(AddCard,AddCardColum,CardName, list._id)">Add Card</button>
+      </div>
+
+    </div>
+    <div>
+      <div class="container-fluid add_list" #AddList>
+        <input class="form-control border-right-0 rounded-0" type="text" placeholder="Enter List Name"
+               style="border-radius: 4px" #ListName>
+        <button class="btn btn-success" (click)="addList(AddList,AddColum,ListName)">Add List</button>
+      </div>
+      <div class="container-fluid add_collum" (click)="addColum(AddColum,AddList)" #AddColum>
+        <i class="fas fa-plus" style="float: left; margin-top: 3px;"></i>
+        Add New List
+      </div>
+    </div>
   </div>
 </div>
 

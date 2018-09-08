@@ -1,8 +1,9 @@
-import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, Inject, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {SocketService} from '../socket.service';
 import {GetService} from '../get.sevice';
 import {Subscription} from 'rxjs';
 import {DragulaService} from 'ng2-dragula';
+import {DOCUMENT} from '@angular/common';
 
 
 @Component({
@@ -12,58 +13,70 @@ import {DragulaService} from 'ng2-dragula';
 })
 
 
-export class BoardComponent implements OnInit,OnDestroy {
+export class BoardComponent implements OnInit, AfterViewInit, OnDestroy {
   arr;
+  subs =new Subscription()
   public index;
-  // @ViewChild('Nav1') nav1
-  // @ViewChild('Body') body
-  MANY_ITEMS = 'MANY_ITEMS';
-  subs = new Subscription();
-  constructor(private socketService: SocketService, private getService: GetService, private dragulaService:DragulaService) {
-
-    this.subs.add(dragulaService.dropModel(this.MANY_ITEMS)
-      .subscribe(({ el, target, source, sourceModel, targetModel, item }) => {
-        console.log('dropModel:');
-        console.log(el, "el");
-        console.log(source, "source");
-        console.log(target , "target");
-        console.log(sourceModel, "sourceModel");
-        console.log(targetModel, "targetModel");
-        console.log(item, "item");
-      })
-    );
-    this.subs.add(dragulaService.removeModel(this.MANY_ITEMS)
-      .subscribe(({ el, source, item, sourceModel }) => {
-        console.log('removeModel:');
-        console.log(el, "el");
-        console.log(source, "source");
-        console.log(sourceModel, "sourceModel");
-        console.log(item, "item");
-      })
-    );
-
+  @ViewChild('header') nav1;
+  @Inject(DOCUMENT) document: ElementRef;
+  constructor(private socketService: SocketService, private getService: GetService, private dragulaService: DragulaService,) {
     this.socketService.getList().subscribe(data => {
+      console.log(data, "getList------------------------");
       this.arr.push(data);
-      console.log(this.arr, "--------------------------")
+      // this.arr[this.arr.length - 1].card.push("")
+      console.log(this.arr.length, '--------------------------', this.arr);
     });
 
     this.socketService.getCard().subscribe(data => {
-      this.arr[this.index].card.push(data['cardName']);
+      console.log(data, " --------------getCard");
+      console.log(this.arr);
+      console.log(this.index)
+      this.arr.find(list => list._id === data["listId"]).card.push(data);
+      console.log(this.arr)
     });
+
+    this.socketService.getDragableData().subscribe(data => {
+      this.arr = data;
+    })
+
+    this.subs.add(this.dragulaService.drop("dragdrop")
+      .subscribe(({ name, el, target, source, sibling }) => {
+        console.log('dropModel:');
+        console.log(el);
+        console.log(source);
+        console.log(target);
+        console.dir(sibling);
+       var data = {
+         dragListId: el.id,
+         dragCardId: source.id,
+         dragCardIndex: el["value"],
+         dropListId: target.id,
+         dropCardIndex: sibling["value"]
+       }
+       this.socketService.sendDragableData(data)
+      })
+    );
+
+
+  }
+  ngOnDestroy() {
+     this.subs.unsubscribe();
   }
 
-  ngOnDestroy() {
-    this.subs.unsubscribe();
+  ngAfterViewInit() {
+    setTimeout(() => {
+      console.log(document.body.scrollWidth);
+      document.body.scrollLeft = document.body.scrollWidth + 118;
+      console.log(document.body.scrollLeft);
+    }, 100);
   }
 
 
   ngOnInit() {
-    this.getService.getAll().subscribe(data =>{
-      console.log(data, "+++++++++++++++++++++++++++++++++++")
-      //console.dir(this.body)
+    this.getService.getAll().subscribe(data => {
+      console.log(data, '+++++++++++++++++++++++++++++++++++');
       this.arr = data;
-      // this.nav1.style.width = window.
-    })
+    });
   }
 
   addColum(AddColum, AddList) {
@@ -72,24 +85,30 @@ export class BoardComponent implements OnInit,OnDestroy {
   }
 
   addList(AddList, AddColum, ListName) {
-    this.socketService.sendList(ListName.value)
+    this.socketService.sendList(ListName.value);
+    setTimeout(() => {
+      console.log(document.body.scrollLeft);
+      document.body.scrollLeft = document.body.scrollWidth;
+      console.log(document.body.scrollLeft);
+    }, 100);
 
     AddList.style.display = 'none';
     AddColum.style.display = 'block';
-    ListName.value = "";
+    ListName.value = '';
   }
 
 
   addCard(AddCard, AddCardColum, CardName, index) {
-    this.index = index
+
+    this.index = index;
     this.socketService.sendCard({
-      id:this.arr[index]._id,
+      id: index,
       cardName: CardName.value
-    })
+    });
 
     AddCard.style.display = 'none';
     AddCardColum.style.display = 'block';
-    CardName.value = ""
+    CardName.value = '';
   }
 
   addCardColum(AddCardColum, AddCard) {
@@ -97,3 +116,7 @@ export class BoardComponent implements OnInit,OnDestroy {
     AddCard.style.display = 'block';
   }
 }
+
+
+
+

@@ -10,7 +10,7 @@
 li{
   list-style: none;
 }
-ul{
+.ul{
   padding: 0 !important;
   margin-right: 5px;
 }
@@ -100,7 +100,6 @@ ul{
 }
 .add_collum{
   width: 250px;
-  /*height: 40px;*/
   background-color: #026aa7;
   color: #fff;
   padding: 8px;
@@ -123,24 +122,24 @@ ul{
 
 }
 .card{
-  width: 250px;
+  min-height: 50px;
   background-color:gainsboro;
-  border-radius: 4px;
   padding: 8px;
-  margin-top: 2px;
-  float: left;
+  margin: -8px 2px 0 2px ;
 }
 .btn_card{
   color: dimgrey;
-  background-color: transparent;
+  background-color:gainsboro;
+  width: 286px;
 }
 .btn_card:hover{
   background-color: darkgray;
 }
 .add_card{
+  background-color:gainsboro;
+  width: 286px;
   border-radius: 4px;
   padding: 8px;
-  margin-top: 2px;
   display: none;
 }
 .cardColum{
@@ -149,4 +148,3 @@ ul{
   padding: 4px !important;
   margin-top: 2px;
 }
-
