@@ -13,11 +13,11 @@ import {DOCUMENT} from '@angular/common';
 })
 
 
-export class BoardComponent implements OnInit, AfterViewInit, OnDestroy {
+export class BoardComponent implements OnInit, OnDestroy {
   arr;
   subs =new Subscription()
   public index;
-  @ViewChild('header') nav1;
+  @ViewChild('cardAndListConteiner') cardAndListConteiner: ElementRef;
   @Inject(DOCUMENT) document: ElementRef;
   constructor(private socketService: SocketService, private getService: GetService, private dragulaService: DragulaService,) {
     this.socketService.getList().subscribe(data => {
@@ -63,13 +63,13 @@ export class BoardComponent implements OnInit, AfterViewInit, OnDestroy {
      this.subs.unsubscribe();
   }
 
-  ngAfterViewInit() {
-    setTimeout(() => {
-      console.log(document.body.scrollWidth);
-      document.body.scrollLeft = document.body.scrollWidth + 118;
-      console.log(document.body.scrollLeft);
-    }, 100);
-  }
+  // ngAfterViewInit() {
+  //   setTimeout(() => {
+  //     console.log(document.body.scrollWidth);
+  //     document.body.scrollLeft = document.body.scrollWidth + 118;
+  //     console.log(document.body.scrollLeft);
+  //   }, 100);
+  // }
 
 
   ngOnInit() {
@@ -86,11 +86,9 @@ export class BoardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   addList(AddList, AddColum, ListName) {
     this.socketService.sendList(ListName.value);
-    setTimeout(() => {
-      console.log(document.body.scrollLeft);
-      document.body.scrollLeft = document.body.scrollWidth;
-      console.log(document.body.scrollLeft);
-    }, 100);
+    setTimeout(() =>{
+      this.cardAndListConteiner.nativeElement.scrollLeft = this.cardAndListConteiner.nativeElement.scrollWidth;
+    },100)
 
     AddList.style.display = 'none';
     AddColum.style.display = 'block';
@@ -114,6 +112,14 @@ export class BoardComponent implements OnInit, AfterViewInit, OnDestroy {
   addCardColum(AddCardColum, AddCard) {
     AddCardColum.style.display = 'none';
     AddCard.style.display = 'block';
+  }
+  closeAddCardForm(AddCard,AddCardColum){
+    AddCard.style.display = 'none';
+    AddCardColum.style.display = 'block';
+  }
+  closeAddListForm(AddList,AddColum){
+    AddList.style.display = 'none';
+    AddColum.style.display = 'block';
   }
 }
 

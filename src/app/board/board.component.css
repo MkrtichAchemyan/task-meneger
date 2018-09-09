@@ -7,6 +7,27 @@
     text-align: center;
   }
 }
+::-webkit-scrollbar {
+  height: 10px;
+  background: #1E62A1;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  border-radius: 10px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #78A1C6;
+  border-radius: 10px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #78B2d7;
+  cursor: pointer;
+}
 li{
   list-style: none;
 }
@@ -142,9 +163,10 @@ li{
   color: white;
 }
 .add_card{
+  width: 198px;
   background-color:gainsboro;
   border-radius: 4px;
-  padding: 0 8px ;
+  padding: 0 ;
   display: none;
 }
 .cardColum{
@@ -154,3 +176,37 @@ li{
   margin-top: 2px;
   cursor: pointer;
 }
+.ulLists{
+  margin: 0;
+  padding: 0;
+  min-height: 10px;
+}
+.cardAndListConteiner{
+  overflow-x: scroll;
+  position: absolute;
+  top: 132px;
+  bottom: 0;
+  padding: 0;
+  margin-bottom: 8px;
+}
+.closeAddCardFormButton{
+  color: gray;
+  background-color: transparent;
+  border: none;
+  float: right;
+  border-radius: 4px;
+}
+.closeAddCardFormButton:hover{
+  color: black;
+}
+.closeAddListFormButton{
+  color: gray;
+  background-color: transparent;
+  border: none;
+  float: right;
+  border-radius: 4px;
+}
+.closeAddListFormButton:hover{
+  color: #000000;
+}
+
