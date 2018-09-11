@@ -18,9 +18,9 @@ app.use(express.json({limit: "50mb"}));
 app.use(express.urlencoded({limit: "50mb", extended: true, parameterLimit: 50000}));
 app.use(bodyParser.json({limit: "50mb"}));
 app.use(bodyParser.urlencoded({limit: "50mb", extended: true, parameterLimit: 50000}));
+
 //app.use("/api/project/card", cardRoute);
 // app.use("/api/project/list", listRoute);
-
 //app.use("/api/project", projectRoute);
 
 app.use(function (req, res, next) {
@@ -36,9 +36,9 @@ app.get("/api/project", (req, res) => {
     .populate({path: "card"})
     .exec((err, lists) => {
       if (err) {
-        throw err;
+        res.status(500).send(err);
       }
-      res.send(lists);
+      res.status(200).send(lists);
     })
 });
 
@@ -51,72 +51,178 @@ io.on('connection', (socket) => {
     list.save()
       .then((list) => {
         Lists.findOne({"_id": list._id})
-        // .populate("card")
+          .populate("card")
           .exec((err, list) => {
             if (err) {
               throw err;
             }
-            console.log(list, "++++++++++++++++++++++++++");
             io.emit("newList", list);
           })
       })
   });
 
   socket.on('sendCard', (data) => {
-    var promise = new Promise(((resolve, reject) => {
-      const card = new Cards({
-        cardName: data.cardName,
-        listId:data.id
-      });
-      card.save()
-        .then((card1) => {
-          Lists.findOne({"_id":data.id})
-            .populate("card")
-            .exec((err, list)=>{
-               if (err) {
-                 throw err;
-               }
-              list.card.push(card1);
-              list.save()
-                .then((list)=>{
-                  resolve("done");
-                });
-              //console.log(list.card, "--------------+++++++++++-----------------");
-            })
-
-        })
-    }))
-
-    promise.then((val) => {
-      Lists.findOne({"_id": data.id})
-        .populate({path: "card"})
-        .exec((err, list) => {
-         // console.log(list.card, "--------------LIst--card------------------");
-          io.emit("newCard", list.card[list.card.length-1]);
-        })
-    })
-  })
-
-  socket.on("dargableData", (data)=>{
-    console.log(data, "dargableData");
-    Lists.findOne({_id:data.dragListId}, (list)=>{
-
-     list.card.splice(data.dragCardIndex,1);
-     list.save();
-      console.log(list, "-----------------------");
-    })
-
-    Lists.findOne({_id:data.dropListId}, (list)=>{
-      list.card.splice(data.dropCardIndex, 0, data.dragCardId);
-      list.save();
-      console.log(list, "+++++++++++++++++++");
-    })
-    Lists.find({})
-      .populate("card")
-      .exec((err, lists)=>{
-        socket.broadcast.emit("newDragableData", lists);
+    const card = new Cards({
+      cardName: data.cardName,
+      listId: data.id
+    });
+    card.save()
+      .then((card1) => {
+        Lists.findOne({"_id": data.id})
+          .populate("card")
+          .exec((err, list) => {
+            if (err) {
+              throw err;
+            }
+            list.card.push(card1);
+            list.save()
+              .then(() => {
+                Lists.find({})
+                  .populate({path: "card"})
+                  .exec((err, arr) => {
+                    io.emit("newCard", arr);
+                  })
+              })
+              .catch((err) => {
+                throw err;
+              })
+          })
       })
   })
+
+  socket.on('sendLoopCard', (data) => {
+    const card = new Cards({
+      cardName: data.cardName,
+      listId: data.id,
+
+    });
+    card.save()
+      .then((card1) => {
+        Lists.findOne({"_id": data.id})
+          .populate("card")
+          .exec((err, list) => {
+            if (err) {
+              throw err;
+            }
+            list.card.push(card1);
+            list.save()
+              .then(() => {
+                Lists.find({})
+                  .populate({path: "card"})
+                  .exec((err, arr) => {
+                    io.emit("newCard", arr);
+                  })
+              })
+              .catch((err) => {
+                throw err;
+              })
+          })
+      })
+  })
+
+
+
+  socket.on("dargableData", (data) => {
+    // dragListId dropListId
+    // dragCardId dropCardId
+    if (data.dragListId === data.dropListId) {
+
+
+      Lists.findOne({"_id": data.dragListId})
+        .exec()
+        .then((list) => {
+          let dragCardIndex = list.card.indexOf(data.dragCardId);
+          let dropCardIndex = list.card.indexOf(data.dropCardId);
+          if (dropCardIndex < 0) {
+            list.card.splice(dragCardIndex, 1);
+            list.card.push(data.dragCardId);
+          } else {
+            list.card.splice(dragCardIndex, 1);
+            if (dragCardIndex > dropCardIndex) {
+              list.card.splice(dropCardIndex, 0, data.dragCardId);
+            }
+            else {
+              list.card.splice(dropCardIndex - 1, 0, data.dragCardId);
+            }
+          }
+          Lists.findByIdAndUpdate(data.dragListId, list, {new: true}, function (err, list) {
+            if (err) {
+              throw err;
+            }
+            Lists.find({})
+              .populate({path: "card"})
+              .exec((err, arr) => {
+                if (err) {
+                  throw err;
+                }
+                io.emit("newDragableData", arr);
+              })
+          });
+        })
+        .catch((err) => {
+          throw {error: err};
+        })
+    } else {
+      Lists.findOne({"_id": data.dragListId})
+        .exec()
+        .then((list) => {
+
+            let dragCardIndex = list.card.indexOf(data.dragCardId);
+            list.card.splice(dragCardIndex, 1);
+            list.save()
+              .then(() => {
+                Lists.findOne({"_id": data.dropListId})
+                  .exec()
+                  .then((list) => {
+                    let dropCardIndex = list.card.indexOf(data.dropCardId);
+                    if (dropCardIndex < 0) {
+                      list.card.push(data.dragCardId);
+                    } else {
+                      if (dropCardIndex === 0) {
+                        list.card.unshift(data.dragCardId);
+                      }
+                      else {
+                        list.card.splice(dropCardIndex - 1, 0, data.dragCardId);
+                      }
+                    }
+
+                    Lists.findByIdAndUpdate(data.dropListId, list, {new: true}, function (err, list) {
+                      if (err) {
+                        throw err;
+                      }
+                      Cards.findOne({"_id": data.dragCardId})
+                        .exec()
+                        .then((card) => {
+                          card.listId = data.dropListId;
+                          card.save()
+                            .then((card) => {
+                              Lists.find({})
+                                .populate({path: "card"})
+                                .exec((err, arr) => {
+                                  console.log(arr[1].card, "--------------Arr--card------------------");
+                                  io.emit("newDragableData", arr);
+                                })
+                            })
+                        })
+                      console.log(list, "List------------------------------------------------");
+                    });
+                  })
+                  .catch((err) => {
+                    throw err;
+                  })
+              })
+              .catch((err) => {
+                throw err;
+              })
+          }
+        )
+        .catch((err) => {
+          throw err;
+        })
+    }
+
+  })
+
 })
 
 

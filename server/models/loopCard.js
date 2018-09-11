@@ -4,7 +4,7 @@ var Schema = mongoose.Schema;
 var ObjectId = Schema.ObjectId;
 
 
-var cardsSchema = new Schema({
+var loopCardsSchema = new Schema({
   cardName: {
     type: String,
     require: true
@@ -17,9 +17,6 @@ var cardsSchema = new Schema({
     type: Date,
     default: new Date()
   },
-  cardType:{
-    type: String
-  },
   active: {
     type: Boolean,
     default: true
@@ -27,4 +24,4 @@ var cardsSchema = new Schema({
 
 });
 
-module.exports = mongoose.model("cards", cardsSchema);
+module.exports = mongoose.model("loopCards", loopCardsSchema);

@@ -7,9 +7,26 @@
     text-align: center;
   }
 }
+.navBig{
+  display: none;
+}
+@media (max-width: 768px) {
+  .navMedium {
+    display: none;
+  }
+  .navSmall{
+    display: none;
+  }
+  .navBig{
+    display: block;
+  }
+}
+
+
 ::-webkit-scrollbar {
   height: 10px;
   background: #1E62A1;
+  border-radius: 10px;
 }
 
 /* Track */
@@ -36,11 +53,14 @@ li{
   margin-right: 5px;
 }
 .nav-item{
-  background-color: hsla(0,0%,100%,.3);
+  background-color: hsla(0,0%,100%,0.3);
   margin-left: 2px;
   border-radius: 4px;
   color: #FFFFFF !important;
   font-weight: bold;
+}
+.nav-item:hover{
+  background-color: hsla(0,0%,100%,0.1);
 }
 .navbar{
   background-color: #026aa7;
@@ -67,6 +87,28 @@ li{
 }
 .dropdown_content_text{
   font-size: 10px;
+}
+@media (max-width: 768px) {
+  .show>.dropdown-menu {
+    left: 80%;
+    transform: translateX(-80%);
+    margin-top: 10px !important;
+    padding: 15px;
+    width: 400px !important;
+  }
+  .dropdown-toggle::after {
+    display:none;
+  }
+  .dropdown-header{
+    text-align: center;
+  }
+  .dropdown-content:hover{
+    color: #FFFFFF;
+    background-color: #026aa7;
+  }
+  .dropdown_content_text{
+    font-size: 10px;
+  }
 }
 .nav2 a {
   color: #FFFFFF;
@@ -127,6 +169,7 @@ li{
   text-align: center;
   margin-top: 2px;
   border-radius: 4px;
+  margin-right: 20px;
 }
 .add_collum:hover{
   cursor:pointer;
@@ -140,6 +183,7 @@ li{
   padding: 8px;
   margin-top: 2px;
   display: none;
+  margin-right: 20px;
 
 }
 
@@ -182,12 +226,16 @@ li{
   min-height: 10px;
 }
 .cardAndListConteiner{
-  overflow-x: scroll;
+  width: 100%;
   position: absolute;
-  top: 132px;
   bottom: 0;
+  top: 132px;
+  left: 0;
+  right: 0;
   padding: 0;
   margin-bottom: 8px;
+  overflow-x: hidden;
+  overflow-y: hidden;
 }
 .closeAddCardFormButton{
   color: gray;
@@ -208,5 +256,33 @@ li{
 }
 .closeAddListFormButton:hover{
   color: #000000;
+}
+
+.cardContainer{
+  overflow-y: auto;
+  max-height: 600px
+}
+
+.cardContainer::-webkit-scrollbar {
+  width: 5px;
+  background: #FFFFFF;
+  border-radius: 10px;
+}
+
+/* Track */
+.cardContainer::-webkit-scrollbar-track {
+  border-radius: 10px;
+}
+
+/* Handle */
+.cardContainer::-webkit-scrollbar-thumb {
+  background: gray;
+  border-radius: 10px;
+}
+
+/* Handle on hover */
+.cardContainer::-webkit-scrollbar-thumb:hover {
+  background: darkgray;
+  cursor: pointer;
 }
 

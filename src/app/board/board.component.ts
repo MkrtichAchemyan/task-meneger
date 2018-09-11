@@ -21,39 +21,56 @@ export class BoardComponent implements OnInit, OnDestroy {
   @Inject(DOCUMENT) document: ElementRef;
   constructor(private socketService: SocketService, private getService: GetService, private dragulaService: DragulaService,) {
     this.socketService.getList().subscribe(data => {
-      console.log(data, "getList------------------------");
       this.arr.push(data);
       // this.arr[this.arr.length - 1].card.push("")
-      console.log(this.arr.length, '--------------------------', this.arr);
     });
 
     this.socketService.getCard().subscribe(data => {
-      console.log(data, " --------------getCard");
-      console.log(this.arr);
-      console.log(this.index)
-      this.arr.find(list => list._id === data["listId"]).card.push(data);
-      console.log(this.arr)
+      this.arr = data;
     });
-
+    this.socketService.getLoopCard().subscribe(data => {
+      this.arr = data;
+    });
     this.socketService.getDragableData().subscribe(data => {
+      console.log(data, " dragableData");
       this.arr = data;
     })
 
     this.subs.add(this.dragulaService.drop("dragdrop")
       .subscribe(({ name, el, target, source, sibling }) => {
         console.log('dropModel:');
-        console.log(el);
-        console.log(source);
-        console.log(target);
+        console.dir(el);
+        console.dir(source);
+        console.dir(target);
         console.dir(sibling);
-       var data = {
-         dragListId: el.id,
-         dragCardId: source.id,
-         dragCardIndex: el["value"],
-         dropListId: target.id,
-         dropCardIndex: sibling["value"]
+       // var data = {
+       //   dragCardId: el.id,
+       //   dragListId: source.id,
+       //   dragCardIndex: el["value"],
+       //   dropListId: target.id,
+       //   dropCardIndex: sibling["value"]
+       // }
+       // console.log(sibling.id, "sibling['value']");
+       if (sibling === null) {
+         console.log("11111111111111111")
+         this.socketService.sendDragableData({
+           dragCardId: el.id,
+           dragListId: source.id,
+           dragCardIndex: el["value"],
+           dropListId: target.id,
+           dropCardId: null
+         })
+       } else {
+         console.log("222222222222222")
+         this.socketService.sendDragableData({
+           dragCardId: el.id,
+           dragListId: source.id,
+           dragCardIndex: el["value"],
+           dropListId: target.id,
+           dropCardId: sibling["id"]
+         })
        }
-       this.socketService.sendDragableData(data)
+
       })
     );
 
@@ -62,19 +79,8 @@ export class BoardComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
      this.subs.unsubscribe();
   }
-
-  // ngAfterViewInit() {
-  //   setTimeout(() => {
-  //     console.log(document.body.scrollWidth);
-  //     document.body.scrollLeft = document.body.scrollWidth + 118;
-  //     console.log(document.body.scrollLeft);
-  //   }, 100);
-  // }
-
-
   ngOnInit() {
     this.getService.getAll().subscribe(data => {
-      console.log(data, '+++++++++++++++++++++++++++++++++++');
       this.arr = data;
     });
   }
@@ -97,13 +103,27 @@ export class BoardComponent implements OnInit, OnDestroy {
 
 
   addCard(AddCard, AddCardColum, CardName, index) {
-
-    this.index = index;
     this.socketService.sendCard({
       id: index,
       cardName: CardName.value
     });
-
+let cardAndListConteiner = document.getElementById(index)
+      setTimeout(() =>{
+        cardAndListConteiner.scrollTop = cardAndListConteiner.scrollHeight;
+      },100)
+    AddCard.style.display = 'none';
+    AddCardColum.style.display = 'block';
+    CardName.value = '';
+  }
+  addLoopCard(AddCard,AddCardColum,CardName,index){
+    this.socketService.sendLoopCard({
+      id: index,
+      cardName: CardName.value
+    });
+    let cardAndListConteiner = document.getElementById(index)
+    setTimeout(() =>{
+      cardAndListConteiner.scrollTop = cardAndListConteiner.scrollHeight;
+    },100)
     AddCard.style.display = 'none';
     AddCardColum.style.display = 'block';
     CardName.value = '';
