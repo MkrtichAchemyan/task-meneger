@@ -56,4 +56,26 @@ export class SocketService {
     });
     return observable
   }
+  sendEditedCard(data){
+    return this.socket.emit("editedCard", data)
+  }
+  getEditedCard(){
+    let observable = new Observable(observer => {
+      this.socket.on('newEditedCard', (data) => {
+        observer.next(data);
+      })
+    });
+    return observable
+  }
+  sendDeletedCard(data){
+    return this.socket.emit("deletedCard", data)
+  }
+  getDeletedCard(){
+    let observable = new Observable(observer => {
+      this.socket.on('newDeletedCard', (data) => {
+        observer.next(data);
+      })
+    });
+    return observable
+  }
 }

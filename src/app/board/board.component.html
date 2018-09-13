@@ -205,7 +205,14 @@
       <div class="col-12 lists">
         <div class="col-12">
           <div class="container">
-            <h6 class="font-weight-bold m-0">{{list.listName}}</h6>
+            <div class="row">
+              <div class="col-10">
+                <h6 class="font-weight-bold m-0">{{list.listName}}</h6>
+              </div>
+              <div class="col-2 deleteList" style="cursor: pointer">
+                <i class="far fa-edit"></i>
+              </div>
+            </div>
           </div>
         </div>
         <div class="col-12 p-0 ">
@@ -215,8 +222,38 @@
                 <div class="container-fluid " >
                   <div class="container cardColum">
                     {{card.cardName}}
-                    <button class="btn btn-xs float-right p-0" style="background-color: transparent">
-                      <i class="fas fa-pencil-alt"></i>
+                    <ng-template #contentEdit let-c="close" let-d="dismiss">
+                      <div class="modal-header">
+                        <h6>Edit Card</h6>
+                        <button type="button" class="close" aria-label="Close" (click)="d('Cross click')">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                      <div class="modal-body">
+                        <input class="form-control rounded-4" type="text" name="{{card._id}}" value="{{card.cardName}}" #modalCardInput>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-dark" (click)="save(modalCardInput.value,modalCardInput.name,d)">Save</button>
+                      </div>
+                    </ng-template>
+                    <ng-template #contentDelete let-c="close" let-d="dismiss">
+                      <div class="modal-header">
+                        <h6>Delete Card</h6>
+                        <button type="button" class="close" aria-label="Close" (click)="d('Cross click')">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                      <div class="modal-body" style="text-align: center">
+                        <p>Are you sure want to delete this card?</p>
+                        <button type="button" class="btn btn-outline-dark mr-1" (click)="delete(card._id,d)">Yes</button>
+                        <button type="button" class="btn btn-outline-dark" (click)="d('Cross click')">No</button>
+                      </div>
+                    </ng-template>
+                    <button class="btn btn-xs float-right p-0 delete"  (click)="deleteCard(contentDelete)">
+                      <i class="fas fa-trash-alt p-1"></i>
+                    </button>
+                    <button class="btn btn-xs float-right p-0 edit"  (click)="editCard(contentEdit)">
+                      <i class="fas fa-pencil-alt p-1"></i>
                     </button>
                   </div>
                 </div>
@@ -231,13 +268,17 @@
               Add Card
             </button>
             <div class="container-fluid add_card" #AddCard>
-              <input class="form-control border-right-0 rounded-4" type="text" placeholder="Enter Card Name"
-                     style="border-radius: 4px" #CardName>
+              <input class="form-control border-right-0 rounded-4" type="text" placeholder="Enter Card Name" style="border-radius: 4px" #CardName>
+              <select class = "form-control" #LoopCrdOption (change)="selectOptinValue($event.target.value)">
+                <option value="1">Hourli</option>
+                <option value="2">Dayli</option>
+                <option value="3">Weekli</option>
+                <option value="4">Monthly</option>
+              </select>
               <div class="row">
                 <div class="col-6">
                   <button class="btn btn-success" (click)="addCard(AddCard,AddCardColum,CardName,list._id)">Add Card</button>
                   <button class="btn btn-success" (click)="addLoopCard(AddCard,AddCardColum,CardName,list._id)">Add Loop Card</button>
-
                 </div>
                 <div class="col-6">
                   <button class="btn closeAddCardFormButton" (click)="closeAddCardForm(AddCard,AddCardColum)">

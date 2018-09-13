@@ -90,35 +90,42 @@ io.on('connection', (socket) => {
       })
   })
 
-  socket.on('sendLoopCard', (data) => {
-    const card = new Cards({
-      cardName: data.cardName,
-      listId: data.id,
-
-    });
-    card.save()
-      .then((card1) => {
-        Lists.findOne({"_id": data.id})
-          .populate("card")
-          .exec((err, list) => {
-            if (err) {
-              throw err;
-            }
-            list.card.push(card1);
-            list.save()
-              .then(() => {
-                Lists.find({})
-                  .populate({path: "card"})
-                  .exec((err, arr) => {
-                    io.emit("newCard", arr);
-                  })
-              })
-              .catch((err) => {
-                throw err;
-              })
-          })
-      })
+  socket.on('editedCard',(data)=>{
+   Cards.findByIdAndUpdate(data.cardId, {new: true}, function (err, card) {
+     console.log(data)
+     console.log(card)
+     card.cardName = data.cardName;
+     card.save()
+       .then((card)=>{
+         console.log(card)
+         Lists.find({})
+           .populate({path: "card"})
+           .exec((err, arr) => {
+             if (err) {
+               throw err;
+             }
+             io.emit("newEditedCard", arr);
+           })
+       })
+   })
   })
+
+  socket.on('deletedCard', (data)=>{
+    Cards.findByIdAndRemove(data, function (err) {
+      if (err) {
+        throw err
+      }
+      Lists.find({})
+        .populate({path: "card"})
+        .exec((err, arr) => {
+          if (err) {
+            throw err;
+          }
+          io.emit("newEditedCard", arr);
+        })
+    })
+  })
+
 
 
 

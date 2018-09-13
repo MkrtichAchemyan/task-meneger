@@ -7,19 +7,21 @@ import { BoardComponent } from './board/board.component';
 import {GetService} from './get.sevice';
 import {SocketService} from './socket.service';
 import { DragulaModule } from 'ng2-dragula';
+import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 
 
 
 @NgModule({
   declarations: [
     AppComponent,
-    BoardComponent,
+    BoardComponent
   ],
   imports: [
     BrowserModule,
     FormsModule,
     HttpClientModule,
     DragulaModule.forRoot(),
+    NgbModule
   ],
   providers: [
     GetService,

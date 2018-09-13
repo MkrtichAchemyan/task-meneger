@@ -285,4 +285,18 @@ li{
   background: darkgray;
   cursor: pointer;
 }
+.edit{
+  background-color: transparent;
+}
+.edit:hover{
+  background-color: lightgray;
+  color: darkgreen;
+}
+.delete{
+  background-color: transparent;
+}
+.delete:hover{
+  background-color: lightgray;
+  color: crimson;
+}
 
