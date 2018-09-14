@@ -130,13 +130,13 @@ io.on('connection', (socket) => {
   const Enum = require('enum');
   const schedule = require('node-schedule');
   require('enum').register();
-  const loopTimes = new Enum({"1": "0 0 * * * *", "2": "0 0 0 * * *", "3": "0 0 0 */7 * *", "4": "0 0 0 0 * *"});
-  //1 --- hourly  -------------------------- "0 0 * * * *"
-  //2 --- Dayly   -------------------------- "0 0 0 * * *"
-  //3 --- weekly  -------------------------- "0 0 0 */7 * *"
-  //4 --- monthly -------------------------- "0 0 0 0 * *"
+
+  //1 --- hourly
+  //2 --- Dayly
+  //3 --- weekly
+  //4 --- monthly
+
   socket.on('sendLoopCard', (data) => {
-    console.log(loopTimes[data.selectedValue]);
     const loopCard = new Cards({
       cardName: data.cardName,
       listId: data.id,
@@ -144,6 +144,13 @@ io.on('connection', (socket) => {
     });
     loopCard.save()
       .then((loopCard) => {
+        let time = loopCard.time;
+        let minutes = time.getMinutes();
+        let seconds = time.getSeconds();
+        let hours = time.getHours();
+        let days = time.getDate();
+        let loopTimes = new Enum({"1": `${seconds} ${minutes} * * * *`, "2": `${seconds} ${minutes} ${hours} * * *`, "3": `${seconds} ${minutes} ${hours} */7 * *`, "4": `${seconds} ${minutes} ${hours} ${days} * *`});
+
         Lists.findOne({"_id": data.id})
           .populate("card")
           .exec((err, list) => {
@@ -157,7 +164,6 @@ io.on('connection', (socket) => {
                   .populate("card")
                   .exec((err, arr) => {
                     io.emit("newLoopCard", arr);
-                    console.log("////////////////**************////////////////////")
                     let scheduler = new Scheduler({
                       listId: loopCard.listId,
                       cardId: loopCard._id,
@@ -186,7 +192,6 @@ io.on('connection', (socket) => {
                                     list.card.push(loopCard._id);
                                     list.save()
                                       .then(() => {
-                                        console.log(scheduler._id, "-------------*************SCHEDULER*************------------", scheduler);
                                         Scheduler.findByIdAndUpdate(scheduler._id, {$push: {runScheduler: runScheduler2}}, {new: true}, function (err, list) {
                                           if (err) {
                                             throw err;

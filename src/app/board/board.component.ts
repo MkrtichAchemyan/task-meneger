@@ -130,11 +130,21 @@ export class BoardComponent implements OnInit, OnDestroy {
   }
 
   addLoopCard(AddCard, AddCardColum, CardName, index) {
-    this.socketService.sendLoopCard({
-      id: index,
-      cardName: CardName.value,
-      selectedValue: this.optionValue
-    });
+    if (this.optionValue === undefined) {
+      this.socketService.sendLoopCard({
+        id: index,
+        cardName: CardName.value,
+        selectedValue: "1"
+      });
+    }
+    else{
+      this.socketService.sendLoopCard({
+        id: index,
+        cardName: CardName.value,
+        selectedValue: this.optionValue
+      });
+      this.optionValue = undefined
+    }
     let cardAndListConteiner = document.getElementById(index)
     setTimeout(() => {
       cardAndListConteiner.scrollTop = cardAndListConteiner.scrollHeight;
