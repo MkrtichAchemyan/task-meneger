@@ -18,11 +18,8 @@ var cardsSchema = new Schema({
     default: new Date()
   },
   cardType:{
-    type: String
-  },
-  active: {
-    type: Boolean,
-    default: true
+    type: String,
+    default:"simple"
   }
 
 });

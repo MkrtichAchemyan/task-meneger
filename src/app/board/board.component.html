@@ -218,7 +218,7 @@
         <div class="col-12 p-0 ">
           <div class="container-fluid p-0">
             <ul dragula="dragdrop" id="{{list._id}}" class="ulLists cardContainer">
-              <li  [hidden]="list.card.length === 0" *ngFor="let card of list.card; let i = index" id="{{card._id}}" value="{{i}}" style="margin-top: 2px">
+              <li   *ngFor="let card of list.card; let i = index" id="{{card._id}}" value="{{i}}" style="margin-top: 2px">
                 <div class="container-fluid " >
                   <div class="container cardColum">
                     {{card.cardName}}

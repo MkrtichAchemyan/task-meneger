@@ -7,6 +7,7 @@ const createError = require('http-errors'),
   mongoose = require("mongoose"),
   Lists = require("./models/list.js"),
   Cards = require("./models/card.js"),
+  Scheduler = require("./models/scheduler")
   http = require('http'),
   server = http.createServer(app),
   io = require('socket.io').listen(server);
@@ -124,6 +125,106 @@ io.on('connection', (socket) => {
           io.emit("newEditedCard", arr);
         })
     })
+  })
+
+  const Enum = require('enum');
+  const schedule = require('node-schedule');
+  require('enum').register();
+  const loopTimes = new Enum({"1": "0 0 * * * *", "2": "0 0 0 * * *", "3": "0 0 0 */7 * *", "4": "0 0 0 0 * *"});
+  //1 --- hourly  -------------------------- "0 0 * * * *"
+  //2 --- Dayly   -------------------------- "0 0 0 * * *"
+  //3 --- weekly  -------------------------- "0 0 0 */7 * *"
+  //4 --- monthly -------------------------- "0 0 0 0 * *"
+  socket.on('sendLoopCard', (data) => {
+    console.log(loopTimes[data.selectedValue]);
+    const loopCard = new Cards({
+      cardName: data.cardName,
+      listId: data.id,
+      cardType: "loop"
+    });
+    loopCard.save()
+      .then((loopCard) => {
+        Lists.findOne({"_id": data.id})
+          .populate("card")
+          .exec((err, list) => {
+            if (err) {
+              throw err;
+            }
+            list.card.push(loopCard);
+            list.save()
+              .then(() => {
+                Lists.find({})
+                  .populate("card")
+                  .exec((err, arr) => {
+                    io.emit("newLoopCard", arr);
+                    console.log("////////////////**************////////////////////")
+                    let scheduler = new Scheduler({
+                      listId: loopCard.listId,
+                      cardId: loopCard._id,
+                    })
+                    scheduler.save()
+                      .then((scheduler) => {
+                        let startTime = new Date(Date.now());
+                        let endTime = new Date(startTime.getTime() + 5 * 200000000);
+                        let runScheduler2 = schedule.scheduleJob({
+                          start: startTime,
+                          end: endTime,
+                          rule: loopTimes[data.selectedValue].value
+                        }, function () {
+                          Cards.findOne({"_id": scheduler.cardId})
+                            .exec()
+                            .then((card1) => {
+                              let card2 = {
+                                cardName: card1.cardName,
+                                listId: scheduler.listId,
+                              }
+                              const loopCard = new Cards(card2);
+                              loopCard.save().then((loopCard) => {
+                                Lists.findOne({"_id": scheduler.listId})
+                                  .exec()
+                                  .then((list) => {
+                                    list.card.push(loopCard._id);
+                                    list.save()
+                                      .then(() => {
+                                        console.log(scheduler._id, "-------------*************SCHEDULER*************------------", scheduler);
+                                        Scheduler.findByIdAndUpdate(scheduler._id, {$push: {runScheduler: runScheduler2}}, {new: true}, function (err, list) {
+                                          if (err) {
+                                            throw err;
+                                          }
+                                          Lists.find({})
+                                            .populate({path: "card"})
+                                            .exec((err, arr) => {
+                                              io.emit("newLoopCard", arr);
+                                            })
+                                        });
+                                      })
+                                      .catch((err) => {
+                                        throw err;
+                                      })
+                                  })
+                                  .catch((err) => {
+                                    throw err;
+                                  })
+                              })
+                            })
+                            .catch((err) => {
+                              throw err;
+                            })
+                        })
+                      })
+                      .catch((err) => {
+                        throw err;
+                      })
+                  })
+              })
+              .catch((err) => {
+                throw err;
+              })
+          })
+      })
+      .catch((err) => {
+        throw err;
+      })
   })
 
 
