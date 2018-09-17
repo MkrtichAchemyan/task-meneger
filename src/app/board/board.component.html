@@ -1,3 +1,5 @@
+                                 <!--medium navbar-->
+
 <div class="container-fluid" style="padding: 0px !important; margin: 0px !important">
   <nav class="navbar navbar-expand-md navbar-dark heder navMedium" #Nav1 style="padding: 0.5rem 0rem; z-index: 2">
     <a class="navbar-brand abs" href="#">
@@ -76,6 +78,8 @@
       </ul>
     </div>
   </nav>
+
+                                     <!--big navbar mobile wersion-->
 
   <nav class="navbar navbar-expand-md navbar-dark heder navBig" #Nav1 style="padding: 0.5rem 0rem; z-index: 2;">
     <a class="navbar-brand abs" href="#">
@@ -176,6 +180,8 @@
     </div>
   </nav>
 
+                            <!--small navbar-->
+
   <nav class="nav nav2 navSmall">
     <a class="nav-link font-weight-bold " href="#">New Dask</a>
     <a class="nav-link" href="#">
@@ -199,9 +205,11 @@
     </div>
   </nav>
 </div>
+                                 <!--lists and cards container-->
+
 <div class="container-fluid cardAndListConteiner mt-1">
   <div class="row"  style="flex-wrap: nowrap; margin-left: 0; overflow-x: auto; min-height: 780px" #cardAndListConteiner>
-    <div *ngFor="let list of arr" style="padding: 4px !important;">
+    <div *ngFor="let list of arr; let listIndex = index" style="padding: 4px !important;">
       <div class="col-12 lists">
         <div class="col-12">
           <div class="container">
@@ -222,6 +230,9 @@
                 <div class="container-fluid " >
                   <div class="container cardColum">
                     {{card.cardName}}
+
+                                         <!--edit card modal-->
+
                     <ng-template #contentEdit let-c="close" let-d="dismiss">
                       <div class="modal-header">
                         <h6>Edit Card</h6>
@@ -236,6 +247,9 @@
                         <button type="button" class="btn btn-outline-dark" (click)="save(modalCardInput.value,modalCardInput.name,d)">Save</button>
                       </div>
                     </ng-template>
+
+                                            <!--delete card modal-->
+
                     <ng-template #contentDelete let-c="close" let-d="dismiss">
                       <div class="modal-header">
                         <h6>Delete Card</h6>
@@ -249,9 +263,15 @@
                         <button type="button" class="btn btn-outline-dark" (click)="d('Cross click')">No</button>
                       </div>
                     </ng-template>
+
+                                               <!--delete catd button-->
+
                     <button class="btn btn-xs float-right p-0 delete"  (click)="deleteCard(contentDelete)">
                       <i class="fas fa-trash-alt p-1"></i>
                     </button>
+
+                                               <!--delete catd button-->
+
                     <button class="btn btn-xs float-right p-0 edit"  (click)="editCard(contentEdit)">
                       <i class="fas fa-pencil-alt p-1"></i>
                     </button>
@@ -263,10 +283,16 @@
         </div>
         <div class="col-12">
           <div class="container p-0">
+
+                                                <!--add card button-->
+
             <button class="btn btn_card" (click)="addCardColum(AddCardColum,AddCard)" #AddCardColum>
               <i class="fas fa-plus" style="margin-top: 3px; margin-right: 20px"></i>
               Add Card
             </button>
+
+                                            <!--new card and loop card registration conteainer-->
+
             <div class="container-fluid add_card" #AddCard>
               <input class="form-control border-right-0 rounded-4" type="text" placeholder="Enter Card Name" style="border-radius: 4px" #CardName>
               <select class = "form-control" #LoopCrdOption (change)="selectOptinValue($event.target.value)">
@@ -292,6 +318,9 @@
       </div>
     </div>
     <div>
+
+                                     <!--new list registration container      -->
+
       <div class="container-fluid add_list" #AddList>
         <input class="form-control rounded-2" type="text" placeholder="Enter List Name"
                style="border-radius: 4px" #ListName>
@@ -300,6 +329,9 @@
           <i class="fas fa-times"></i>
         </button>
       </div>
+
+                               <!--add new list button-->
+
       <div class="container-fluid add_collum" (click)="addColum(AddColum,AddList)" #AddColum>
         <i class="fas fa-plus" style="float: left; margin-top: 3px;"></i>
         Add New List

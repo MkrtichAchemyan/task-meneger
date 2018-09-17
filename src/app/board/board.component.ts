@@ -26,9 +26,11 @@ export class BoardComponent implements OnInit, OnDestroy {
   constructor(private socketService: SocketService, private getService: GetService, private dragulaService: DragulaService, config: NgbModalConfig, private modalService: NgbModal) {
     config.backdrop = 'static';
     config.keyboard = false;
+
+    // get data sockets
+
     this.socketService.getList().subscribe(data => {
       this.arr.push(data);
-      // this.arr[this.arr.length - 1].card.push("")
     });
 
     this.socketService.getCard().subscribe(data => {
@@ -47,23 +49,11 @@ export class BoardComponent implements OnInit, OnDestroy {
       this.arr = data;
     })
 
+    // drag and drop,,, send data
+
     this.subs.add(this.dragulaService.drop("dragdrop")
       .subscribe(({name, el, target, source, sibling}) => {
-        // console.log('dropModel:');
-        // console.dir(el);
-        // console.dir(source);
-        // console.dir(target);
-        // console.dir(sibling);
-        // var data = {
-        //   dragCardId: el.id,
-        //   dragListId: source.id,
-        //   dragCardIndex: el["value"],
-        //   dropListId: target.id,
-        //   dropCardIndex: sibling["value"]
-        // }
-        // console.log(sibling.id, "sibling['value']");
         if (sibling === null) {
-          console.log("11111111111111111")
           this.socketService.sendDragableData({
             dragCardId: el.id,
             dragListId: source.id,
@@ -72,7 +62,6 @@ export class BoardComponent implements OnInit, OnDestroy {
             dropCardId: null
           })
         } else {
-          console.log("222222222222222")
           this.socketService.sendDragableData({
             dragCardId: el.id,
             dragListId: source.id,
@@ -93,15 +82,22 @@ export class BoardComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+
+    // get all data
+
     this.getService.getAll().subscribe(data => {
       this.arr = data;
     });
   }
 
+  // open new list registr container
+
   addColum(AddColum, AddList) {
     AddColum.style.display = 'none';
     AddList.style.display = 'block';
   }
+
+  // send new list data
 
   addList(AddList, AddColum, ListName) {
     this.socketService.sendList(ListName.value);
@@ -114,6 +110,7 @@ export class BoardComponent implements OnInit, OnDestroy {
     ListName.value = '';
   }
 
+// send new card data
 
   addCard(AddCard, AddCardColum, CardName, index) {
     this.socketService.sendCard({
@@ -128,6 +125,8 @@ export class BoardComponent implements OnInit, OnDestroy {
     AddCardColum.style.display = 'block';
     CardName.value = '';
   }
+
+  // send loop card data
 
   addLoopCard(AddCard, AddCardColum, CardName, index) {
     if (this.optionValue === undefined) {
@@ -154,25 +153,34 @@ export class BoardComponent implements OnInit, OnDestroy {
     CardName.value = '';
   }
 
+  // show card register  container
+
   addCardColum(AddCardColum, AddCard) {
     AddCardColum.style.display = 'none';
     AddCard.style.display = 'block';
   }
+
+  // close card register  container
 
   closeAddCardForm(AddCard, AddCardColum) {
     AddCard.style.display = 'none';
     AddCardColum.style.display = 'block';
   }
 
+  // close list register  container
+
   closeAddListForm(AddList, AddColum) {
     AddList.style.display = 'none';
     AddColum.style.display = 'block';
   }
 
+  // open edit card modal
+
   editCard(content) {
-    console.log(content)
     this.modalService.open(content);
   }
+
+  // save edited data
 
   save(modalCardInputValue, modalCardInputId, d) {
     let cardProparty = {
@@ -183,25 +191,19 @@ export class BoardComponent implements OnInit, OnDestroy {
     d()
   }
 
+  // open delete card modal
+
   deleteCard(content) {
-    console.log(content)
     this.modalService.open(content);
   }
+
+  // send delete card data
 
   delete(cardId, d) {
     this.socketService.sendDeletedCard(cardId);
     d()
   }
-  selectOptinValue(event){
-    this.optionValue = event
-  }
 }
-
-
-
-
-
-
 
 
 

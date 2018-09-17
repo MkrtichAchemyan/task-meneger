@@ -10,6 +10,7 @@ export class SocketService {
   };
   private socket = io.connect("http://localhost:8000");
 
+  //.........
   sendList(data){
     return this.socket.emit("sendList", data)
   }
@@ -22,11 +23,10 @@ export class SocketService {
     return observable
   }
 
+
+  //............
   sendCard(data){
     return this.socket.emit("sendCard", data)
-  }
-  sendLoopCard(data){
-    return this.socket.emit("sendLoopCard", data)
   }
   getCard(){
     let observable = new Observable(observer => {
@@ -36,6 +36,11 @@ export class SocketService {
     });
     return observable
   }
+
+  //...........
+  sendLoopCard(data){
+    return this.socket.emit("sendLoopCard", data)
+  }
   getLoopCard(){
     let observable = new Observable(observer => {
       this.socket.on('newLoopCard', (data) => {
@@ -44,10 +49,11 @@ export class SocketService {
     });
     return observable
   }
+
+  //...........
   sendDragableData(data){
     return this.socket.emit("dargableData", data)
   }
-
   getDragableData(){
     let observable = new Observable(observer => {
       this.socket.on('newDragableData', (data) => {
@@ -56,6 +62,8 @@ export class SocketService {
     });
     return observable
   }
+
+  //...........
   sendEditedCard(data){
     return this.socket.emit("editedCard", data)
   }
@@ -67,6 +75,9 @@ export class SocketService {
     });
     return observable
   }
+
+  //...........
+
   sendDeletedCard(data){
     return this.socket.emit("deletedCard", data)
   }
