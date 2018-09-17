@@ -8,7 +8,7 @@ const createError = require('http-errors'),
   Lists = require("./models/list.js"),
   Cards = require("./models/card.js"),
   Scheduler = require("./models/scheduler")
-  http = require('http'),
+http = require('http'),
   server = http.createServer(app),
   io = require('socket.io').listen(server);
 
@@ -32,6 +32,7 @@ app.use(function (req, res, next) {
   next();
 });
 
+// send all data
 app.get("/api/project", (req, res) => {
   Lists.find({})
     .populate({path: "card"})
@@ -44,8 +45,9 @@ app.get("/api/project", (req, res) => {
 });
 
 io.on('connection', (socket) => {
+
+  // Add list in List collection
   socket.on('sendList', (data) => {
-    console.log(data);
     const list = new Lists({
       listName: data
     });
@@ -61,6 +63,8 @@ io.on('connection', (socket) => {
           })
       })
   });
+
+//**************************** Add card in Card collection **********************************
 
   socket.on('sendCard', (data) => {
     const card = new Cards({
@@ -90,28 +94,27 @@ io.on('connection', (socket) => {
           })
       })
   })
+// ******************************* Edit card in card collection *********************************
 
-  socket.on('editedCard',(data)=>{
-   Cards.findByIdAndUpdate(data.cardId, {new: true}, function (err, card) {
-     console.log(data)
-     console.log(card)
-     card.cardName = data.cardName;
-     card.save()
-       .then((card)=>{
-         console.log(card)
-         Lists.find({})
-           .populate({path: "card"})
-           .exec((err, arr) => {
-             if (err) {
-               throw err;
-             }
-             io.emit("newEditedCard", arr);
-           })
-       })
-   })
+  socket.on('editedCard', (data) => {
+    Cards.findByIdAndUpdate(data.cardId, {new: true}, function (err, card) {
+
+      card.cardName = data.cardName;
+      card.save()
+        .then((card) => {
+          Lists.find({})
+            .populate({path: "card"})
+            .exec((err, arr) => {
+              if (err) {
+                throw err;
+              }
+              io.emit("newEditedCard", arr);
+            })
+        })
+    })
   })
-
-  socket.on('deletedCard', (data)=>{
+// ********************************* Delete card in card collection *********************************
+  socket.on('deletedCard', (data) => {
     Cards.findByIdAndRemove(data, function (err) {
       if (err) {
         throw err
@@ -136,6 +139,7 @@ io.on('connection', (socket) => {
   //3 --- weekly
   //4 --- monthly
 
+  //Add loop card in card collection
   socket.on('sendLoopCard', (data) => {
     const loopCard = new Cards({
       cardName: data.cardName,
@@ -149,7 +153,12 @@ io.on('connection', (socket) => {
         let seconds = time.getSeconds();
         let hours = time.getHours();
         let days = time.getDate();
-        let loopTimes = new Enum({"1": `${seconds} ${minutes} * * * *`, "2": `${seconds} ${minutes} ${hours} * * *`, "3": `${seconds} ${minutes} ${hours} */7 * *`, "4": `${seconds} ${minutes} ${hours} ${days} * *`});
+        let loopTimes = new Enum({
+          "1": `${seconds} ${minutes} * * * *`,
+          "2": `${seconds} ${minutes} ${hours} * * *`,
+          "3": `${seconds} ${minutes} ${hours} */7 * *`,
+          "4": `${seconds} ${minutes} ${hours} ${days} * *`
+        });
 
         Lists.findOne({"_id": data.id})
           .populate("card")
@@ -164,6 +173,9 @@ io.on('connection', (socket) => {
                   .populate("card")
                   .exec((err, arr) => {
                     io.emit("newLoopCard", arr);
+
+//**************************** Create Scheduler collection for add task every time( time = loopTimes[data.selectedValue].value) **************************
+
                     let scheduler = new Scheduler({
                       listId: loopCard.listId,
                       cardId: loopCard._id,
@@ -171,7 +183,7 @@ io.on('connection', (socket) => {
                     scheduler.save()
                       .then((scheduler) => {
                         let startTime = new Date(Date.now());
-                        let endTime = new Date(startTime.getTime() + 5 * 200000000);
+                        let endTime = new Date(startTime.getTime() + 5 * 2000000000000000);
                         let runScheduler2 = schedule.scheduleJob({
                           start: startTime,
                           end: endTime,
@@ -232,9 +244,7 @@ io.on('connection', (socket) => {
       })
   })
 
-
-
-
+// ****************************** To fix data of draggable *****************************
   socket.on("dargableData", (data) => {
     // dragListId dropListId
     // dragCardId dropCardId
@@ -312,12 +322,10 @@ io.on('connection', (socket) => {
                               Lists.find({})
                                 .populate({path: "card"})
                                 .exec((err, arr) => {
-                                  console.log(arr[1].card, "--------------Arr--card------------------");
                                   io.emit("newDragableData", arr);
                                 })
                             })
                         })
-                      console.log(list, "List------------------------------------------------");
                     });
                   })
                   .catch((err) => {
