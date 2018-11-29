@@ -8,7 +8,7 @@ export class SocketService {
 
   constructor(private http: HttpClient) {
   };
-  private socket = io.connect("http://localhost:8000");
+  private socket = io.connect("http://192.168.0.124:8000");
 
   //.........
   sendList(data){

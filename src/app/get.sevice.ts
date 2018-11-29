@@ -6,6 +6,6 @@ export class GetService {
 
   constructor(private http: HttpClient) {}
   getAll(){
-    return this.http.get('http://localhost:3000/api/project/')
+    return this.http.get('http://192.168.0.124:3000/api/project/')
   }
 }

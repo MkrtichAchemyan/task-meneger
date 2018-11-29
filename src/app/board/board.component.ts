@@ -85,7 +85,8 @@ export class BoardComponent implements OnInit, OnDestroy {
 
     // get all data
 
-    this.getService.getAll().subscribe(data => {
+    this.getService.
+    getAll().subscribe(data => {
       this.arr = data;
     });
   }
@@ -202,6 +203,10 @@ export class BoardComponent implements OnInit, OnDestroy {
   delete(cardId, d) {
     this.socketService.sendDeletedCard(cardId);
     d()
+  }
+
+  selectOptinValue(val){
+    this.optionValue = val
   }
 }
 

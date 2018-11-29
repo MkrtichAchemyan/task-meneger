@@ -23,25 +23,25 @@
 }
 
 
-::-webkit-scrollbar {
+.cardAndListConteiner::-webkit-scrollbar {
   height: 10px;
   background: #1E62A1;
   border-radius: 10px;
 }
 
 /* Track */
-::-webkit-scrollbar-track {
+.cardAndListConteiner::-webkit-scrollbar-track {
   border-radius: 10px;
 }
 
 /* Handle */
-::-webkit-scrollbar-thumb {
+.cardAndListConteiner::-webkit-scrollbar-thumb {
   background: #78A1C6;
   border-radius: 10px;
 }
 
 /* Handle on hover */
-::-webkit-scrollbar-thumb:hover {
+.cardAndListConteiner::-webkit-scrollbar-thumb:hover {
   background: #78B2d7;
   cursor: pointer;
 }
@@ -234,7 +234,7 @@ li{
   right: 0;
   padding: 0;
   margin-bottom: 8px;
-  overflow-x: hidden;
+  overflow-x: auto;
   overflow-y: hidden;
 }
 .closeAddCardFormButton{

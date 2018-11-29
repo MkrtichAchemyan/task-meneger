@@ -11,6 +11,8 @@ const createError = require('http-errors'),
 http = require('http'),
   server = http.createServer(app),
   io = require('socket.io').listen(server);
+ip = require('ip').address()
+console.log(ip)
 
 mongoose.connect("mongodb://localhost:27017/Project", {useNewUrlParser: true});
 
@@ -25,7 +27,7 @@ app.use(bodyParser.urlencoded({limit: "50mb", extended: true, parameterLimit: 50
 //app.use("/api/project", projectRoute);
 
 app.use(function (req, res, next) {
-  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:4200');
+  res.setHeader('Access-Control-Allow-Origin', `http://${ip}:4200`);
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
   res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type,Accept, Authorization');
   res.setHeader('Access-Control-Allow-Credentials', true);
@@ -346,11 +348,11 @@ io.on('connection', (socket) => {
 
 })
 
+app.listen(3000,'0.0.0.0', function () {
+  console.log("server run!!!");
+});
 
-server.listen(8000, function () {
+server.listen(8000, '0.0.0.0', function () {
   console.log("socket run!!!")
 })
 
-app.listen(3000, function () {
-  console.log("server run!!!");
-});
